@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -12,7 +13,8 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        // Return all clients in the database
+        return response()->json(Client::all(), 200);
     }
 
     /**
@@ -20,7 +22,26 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validade the request
+        $request->validate(
+            [
+                'name' => 'required',
+                'email' => 'required|email|unique:clients',
+                'name' => 'required',
+            ],
+            [
+
+            ]
+        );
+
+        // Add a new client to the database
+        $client = Client::create($request->all());
+        return response()->json(
+            [
+                'message' => 'Client created successfully',
+                'data' => $client,
+            ],200
+        );
     }
 
     /**
@@ -28,7 +49,15 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Show client details
+        $client = Client::find($id);
+        
+        // Return a response
+        if($client){
+            return response()->json($client, 200);
+        }else{
+            return response()->json(['message' => 'Client not found'], 404);
+        }
     }
 
     /**
@@ -36,7 +65,27 @@ class ClientController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validade the request
+        $request->validate(
+            [
+                'name' => 'required',
+                'email' => 'required|email|unique:clients,email,' . $id,
+                'name' => 'required',
+            ],
+            [
+
+            ]
+        );
+
+        // update the client in the database
+        $client = Client::find($id);
+        if($client){
+            $client->update($request->all());
+            return response()->json(['message' => 'Client updated successfully'], 200);
+        }else{
+            return response()->json(['message' => 'Client not found'], 404);
+        }
+
     }
 
     /**
