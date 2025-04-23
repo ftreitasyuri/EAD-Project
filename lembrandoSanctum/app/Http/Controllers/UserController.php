@@ -37,7 +37,7 @@ class UserController extends Controller
         if (!$attempt) {
             return response()->json(
                 [
-                    'error' => 'Unauthorized'
+                    'error' => 'Não Autorizado'
                 ],
                 401
             );
